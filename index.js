@@ -6,14 +6,18 @@ const URL = require('./models/url');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const staticRoute = require('./routes/staticRouter')
-app.use('/', staticRoute)
+const urlRoute = require('./routes/url');
+const staticRoute = require('./routes/staticRouter');
+const userRoute = require('./routes/user');
+
+app.use('/', staticRoute);
+app.use("/url", urlRoute);
+app.use("/user", userRoute);
 
 app.set("view engine", "ejs");
 app.set('views', path.resolve("./views"));
 
 const { connectToDB } = require('./connection');
-const urlRoute = require('./routes/url');
 
 app.get('/', async (req,res) => {
   allUrl = await URL.find({});
@@ -23,7 +27,6 @@ app.get('/', async (req,res) => {
   });
 })
 
-app.use("/url", urlRoute);
 app.get('/url/:shortId', async (req, res) => {
   const shortId = req.params.shortId;
   const entry = await URL.findOneAndUpdate({
