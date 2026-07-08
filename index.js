@@ -3,15 +3,19 @@ const app = express();
 const path = require('path');
 const port = 8001;
 const URL = require('./models/url');
+const cookieParser = require('cookie-parser')
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+const { restrictLoggedInUser, checkAuth } = require('./middlewares/auth')
 
 const urlRoute = require('./routes/url');
 const staticRoute = require('./routes/staticRouter');
 const userRoute = require('./routes/user');
 
-app.use('/', staticRoute);
-app.use("/url", urlRoute);
+app.use('/', checkAuth, staticRoute);
+app.use("/url", restrictLoggedInUser, urlRoute);
 app.use("/user", userRoute);
 
 app.set("view engine", "ejs");
