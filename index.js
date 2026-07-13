@@ -37,7 +37,7 @@ app.get('/url/:shortId', async (req, res) => {
     shortId
   }, { $push: {
     visitHis: {
-      timestamp: Date.now(),    }
+      timestamp: Date.now(), }
   },});
   res.redirect(entry.redirectURL)
 })
