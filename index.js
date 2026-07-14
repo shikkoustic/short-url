@@ -8,15 +8,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const { restrictLoggedInUser, checkAuth } = require('./middlewares/auth')
+const { checkForAuthentication, restrictTo } = require('./middlewares/auth')
 
 const urlRoute = require('./routes/url');
 const staticRoute = require('./routes/staticRouter');
 const userRoute = require('./routes/user');
 
-app.use('/', checkAuth, staticRoute);
-app.use("/url", restrictLoggedInUser, urlRoute);
+app.use(checkForAuthentication);
+app.use("/", staticRoute);
 app.use("/user", userRoute);
+app.use("/url", restrictTo(["NORMAL", "ADMIN"]), urlRoute);
 
 app.set("view engine", "ejs");
 app.set('views', path.resolve("./views"));
